@@ -12,5 +12,8 @@ app.get('/transaction', (req, res) => res.render('transaction'));
 app.get('/about', (req, res) => res.render('about'));
 
 
+// Dynamic port for AWS/Local
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
