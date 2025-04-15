@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Membership Transactions</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+  <h1>Past Membership Purchases</h1>
+  <div id="transactionsContainer">Loading...</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="/js/contract.js"></script>
+  <script>
+    async function renderTransactions() {
+      const container = document.getElementById("transactionsContainer");
+
+      try {
+        const txs = await getMembershipTransactions();
+        if (txs.length === 0) {
+          container.innerHTML = "<p>No transactions yet.</p>";
+          return;
+        }
+
+        container.innerHTML = "<ul>" + txs.map(tx => `
+          <li>
+            <strong>Buyer:</strong> ${tx.buyer}<br/>
+            <strong>Package:</strong> ${["Basic", "Standard", "Premium"][tx.packageId] || "Unknown"}<br/>
+            <strong>Expiry:</strong> ${tx.expiry}<br/>
+            <strong>Hash:</strong> ${tx.txHash}<br/>
+            <a href="https://sepolia.etherscan.io/tx/${tx.txHash}" target="_blank">View on Etherscan</a>
+          </li><hr/>
+        `).join("") + "</ul>";
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p>Error loading transactions.</p>";
+      }
+    }
+
+    renderTransactions();
+  </script>
+</body>
+</html>

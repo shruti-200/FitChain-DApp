@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gym Membership Packages</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+  <h1>Available Membership Packages</h1>
+  <div id="packagesContainer">Loading...</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="/js/contract.js"></script>
+  <script>
+    async function renderPackages() {
+      const container = document.getElementById("packagesContainer");
+      try {
+        const packages = await loadPackages();
+        container.innerHTML = "";
+
+        packages.forEach(pkg => {
+          const feeEth = ethers.utils.formatEther(pkg.fee);
+          const durationDays = pkg.duration / (60 * 60 * 24);
+          container.innerHTML += `
+            <div style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem;">
+              <h3>${pkg.name}</h3>
+              <p>Fee: ${feeEth} ETH</p>
+              <p>Duration: ${durationDays} days</p>
+              <button onclick="buyPackage(${pkg.id}, ${feeEth})">Buy</button>
+            </div>
+          `;
+        });
+      } catch (err) {
+        container.innerHTML = "<p>Could not load packages.</p>";
+        console.error(err);
+      }
+    }
+
+    renderPackages();
+  </script>
+</body>
+</html>
